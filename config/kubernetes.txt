@@ -1,0 +1,103 @@
+
+kubernetes {
+    name = 'Kubernetes'
+    serverUrl = 'https://kingslanding.westeros.co.uk'
+    skipTlsVerify = true
+    namespace = 'kingslanding'
+    jenkinsUrl = 'http://kingslanding-dev-jenkins.kingslanding.svc.cluster.local'
+    credentialsId = 'VALYRIAN_STEEL_SECRET'
+    containerCapStr = '500'
+    retentionTimeout = 5
+    connectTimeout = 0
+    readTimeout = 0
+    podTemplatesDefaults {
+        instanceCap = 2147483647
+    }
+    containerTemplateDefaults {
+        name = 'jnlp'
+        alwaysPullImage= false
+        ttyEnabled= true
+        privileged= true
+        workingDir= '/var/jenkins_home'
+        args= '${computer.jnlpmac} ${computer.name} -jar-cache /var/jenkins_home/jars'
+        resourceRequestCpu = '1000m'
+        resourceLimitCpu = '2000m'
+        resourceRequestMemory = '1Gi'
+        resourceLimitMemory = '2Gi'
+        command = ''
+    }
+    podTemplates = [
+        [
+            name: 'PARENT',
+            idleMinutes: 0,
+            nodeSelector: 'role=jenkins',
+            nodeUsageMode: 'NORMAL',
+            customWorkspaceVolumeEnabled: false,
+            workspaceVolume: [
+                type: 'EmptyDirWorkspaceVolume',
+                memory: false,
+            ],
+            volumes: [
+                [
+                    type: 'HostPathVolume',
+                    mountPath: '/jenkins/.m2/repository',
+                    hostPath: '/jenkins/m2'
+                ]
+            ],
+            keyValueEnvVar: [
+                [
+                    key: 'VAULT_TOKEN_ARTIFACTORY',
+                    value: '{{with $secret := secret "secret/jenkins/artifactory" }}{{ $secret.Data.value }}{{end}}'
+                ],
+                [   key: 'VAULT_ADDR',
+                    value: '{{env "VAULT_ADDR"}}'
+                ],
+                [   key: 'CONSUL_ADDR',
+                    value: '{{env "CONSUL_ADDR"}}'
+                ]
+            ],
+            podImagePullSecret: 'my-secret'
+        ],
+        [
+            name: 'Java',
+            label: 'java_slave',
+            inheritFrom: 'PARENT',
+            containerTemplate : [
+                image: 'registry.host.domain/jenkins-slave-java',
+                alwaysPullImage: true,
+                resourceRequestCpu: '1000m',
+                resourceRequestMemory: '1Gi',
+                resourceLimitCpu: '2000m',
+                resourceLimitMemory: '2Gi'
+            ]
+
+        ],
+        [
+            name: 'Go',
+            label: 'go_slave',
+            inheritFrom: 'PARENT',
+            containerTemplate : [
+                image: 'registry.host.domain/jenkins-slave-go',
+                alwaysPullImage: true,
+                resourceRequestCpu: '1000m',
+                resourceRequestMemory: '1Gi',
+                resourceLimitCpu: '2000m',
+                resourceLimitMemory: '8Gi'
+            ],
+            volumes: [
+                [
+                    type: 'HostPathVolume',
+                    mountPath: '/var/go/go_stuff',
+                    hostPath: '/go/go_stuff'
+                ],
+                [
+                    type: 'HostPathVolume',
+                    mountPath: '/var/go/some_other_go_stuff',
+                    hostPath: '/go/some_other_go_stuff'
+                ]
+             ]
+
+        ]
+
+    ]
+}
