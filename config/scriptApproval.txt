@@ -1,15 +1,7 @@
 scriptApproval{
     approvedSignatures=[
-
-    'method groovy.util.ConfigSlurper parse java.util.Properties',
-    'method jenkins.model.Jenkins getExtensionList java.lang.String',
-    'new com.cloudbees.plugins.credentials.impl.UsernamePasswordCredentialsImpl com.cloudbees.plugins.credentials.CredentialsScope java.lang.String java.lang.String java.lang.String java.lang.String',
-    'method com.cloudbees.plugins.credentials.CredentialsStore addCredentials com.cloudbees.plugins.credentials.domains.Domain com.cloudbees.plugins.credentials.Credentials',
-    'staticField com.cloudbees.plugins.credentials.CredentialsScope GLOBAL',
-    'new groovy.util.ConfigObject',
     'method groovy.util.ConfigSlurper parse java.lang.String',
-    'staticMethod org.codehaus.groovy.runtime.DefaultGroovyMethods getText java.io.File',
-    'staticMethod java.lang.System getenv java.lang.String',
+    'staticMethod java.lang.System getenv',
     'method org.jenkinsci.plugins.scriptsecurity.scripts.ScriptApproval approveSignature java.lang.String',
     'staticMethod org.jenkinsci.plugins.scriptsecurity.scripts.ScriptApproval get',
 

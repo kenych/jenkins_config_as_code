@@ -1,0 +1,8 @@
+scriptApproval{
+    approvedSignatures=[
+    'method groovy.util.ConfigSlurper parse java.lang.String',
+    'staticMethod java.lang.System getenv',
+    'method org.jenkinsci.plugins.scriptsecurity.scripts.ScriptApproval approveSignature java.lang.String',
+    'staticMethod org.jenkinsci.plugins.scriptsecurity.scripts.ScriptApproval get'
+    ]
+}
